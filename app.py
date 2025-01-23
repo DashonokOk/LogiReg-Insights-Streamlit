@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
+import numpy as np
 
 # Функция для выполнения логистической регрессии
 def perform_logistic_regression(df, target_column):
@@ -22,9 +23,9 @@ def perform_logistic_regression(df, target_column):
 def plot_scatter(df, x_col, y_col, color_col):
     fig, ax = plt.subplots()
     scatter = ax.scatter(df[x_col], df[y_col], c=df[color_col], cmap='viridis')
-    plt.xlabel(x_col)
-    plt.ylabel(y_col)
-    plt.title(f'Scatter plot of {x_col} vs {y_col}')
+    plt.xlabel(x_col, fontsize=12)
+    plt.ylabel(y_col, fontsize=12)
+    plt.title(f'График рассеяния {x_col} vs {y_col}', fontsize=14)
     plt.colorbar(scatter, label=color_col)
     st.pyplot(fig)
 
@@ -32,29 +33,30 @@ def plot_scatter(df, x_col, y_col, color_col):
 def main():
     st.title("LogiReg Insights")
     
-    uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
+    st.write("Загрузите ваш CSV файл:")
+    uploaded_file = st.file_uploader("Загрузить файл", type=["csv"])
     
     if uploaded_file is not None:
         df = pd.read_csv(uploaded_file)
         
-        st.write("Data Preview:")
+        st.write("Превью данных:")
         st.dataframe(df.head())
         
-        target_column = st.selectbox("Select the target column", df.columns)
+        target_column = st.selectbox("Выберите целевой столбец", df.columns)
         
-        if st.button("Perform Logistic Regression"):
+        if st.button("Выполнить логистическую регрессию"):
             feature_importance, intercept = perform_logistic_regression(df, target_column)
-            st.write("Feature Importance (Weights):")
+            st.write("Веса признаков:")
             st.write(feature_importance)
-            st.write(f"Intercept: {intercept}")
+            st.write(f"Свободный член: {intercept}")
         
         if len(df.columns) >= 2:
-            st.write("Scatter Plot Options:")
-            x_col = st.selectbox("Select X-axis column", df.columns)
-            y_col = st.selectbox("Select Y-axis column", df.columns)
-            color_col = st.selectbox("Select Color column", df.columns)
+            st.write("Параметры для построения графика рассеяния:")
+            x_col = st.selectbox("Выберите столбец для оси X", df.columns)
+            y_col = st.selectbox("Выберите столбец для оси Y", df.columns)
+            color_col = st.selectbox("Выберите столбец для цветовой дифференциации", df.columns)
             
-            if st.button("Plot Scatter"):
+            if st.button("Построить график рассеяния"):
                 plot_scatter(df, x_col, y_col, color_col)
 
 if __name__ == "__main__":
